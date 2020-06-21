@@ -143,6 +143,10 @@ void SystemInit (void) {
   SCB->CPACR |= ((3UL << 10*2) | (3UL << 11*2));    /* set CP10, CP11 Full Access */
 #endif /* ((__FPU_PRESENT == 1) && (__FPU_USED == 1)) */
 
+ /*
+   * Disable LMEM cache to debug in ddr!
+   */
+#ifdef NDEBUG
   /* Initialize Cache */
   /* Enable Code Bus Cache */
   /* set command to invalidate all ways, and write GO bit to initiate command */
@@ -166,6 +170,8 @@ void SystemInit (void) {
 
   __ISB();
   __DSB();
+
+#endif
 
   SystemInitHook();
 }
