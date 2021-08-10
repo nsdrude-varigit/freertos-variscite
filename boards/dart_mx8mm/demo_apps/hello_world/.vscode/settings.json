@@ -1,0 +1,9 @@
+{
+	"VARISCITE": {
+		/* Configure ARMGCC_DIR per https://variwiki.com/index.php?title=MCUXpresso */
+		"ARMGCC_DIR": "/home/variscite/var-mcuxpresso/gcc-arm-none-eabi-9-2020-q2-update",
+
+		/* SOC Include Path */
+		"SOC_INCLUDE_PATH" : "/home/variscite/var-mcuxpresso/freertos-variscite/devices/MIMX8MM6/",
+	}
+}
