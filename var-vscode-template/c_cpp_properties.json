@@ -1,0 +1,13 @@
+{
+    "configurations": [
+        {
+            "name": "Linux",
+            "includePath": [
+                "${workspaceFolder}/**",
+                "${config:VARISCITE.SOC_INCLUDE_PATH}/**"
+            ]
+        }
+    ],
+    "version": 4
+}
+
