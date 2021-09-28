@@ -10,7 +10,7 @@ PATH_TO_ARM_TOOLCHAIN="${BSP_BASE_DIR}/../gcc-arm-none-eabi-9-2020-q2-update"
 usage()
 {
 	echo
-	echo "This script add .vscode folder to add visual studio code support to freertos-variscite examples"
+	echo "This script generates a .vscode folder to add Visual Studio Code support to freertos-variscite examples"
 	echo
 	echo " Usage: $0 OPTIONS"
 	echo
@@ -29,26 +29,36 @@ check_params()
 {
 	if [[ ! -d boards/$BOARD_DIR ]] ; then
 		echo "ERROR: \"boards/$BOARD_DIR\" does not exist"
+		usage
 		exit 1
 	fi
 
 	if [[ ! -d $GDBSERVER_DIR ]] ; then
 		echo "ERROR: \"$GDBSERVER_DIR\" does not exist"
+		echo "Download and Install J-Link Software: https://www.segger.com/downloads/jlink/"
+		echo "e.g. sudo dpkg -i ~/Downloads/JLink_Linux_V754d_x86_64.deb"
+		usage
 		exit 1
 	fi
 
 	if [[ ! -d $PATH_TO_EXAMPLE_SRC ]] ; then
 		echo "ERROR: \"$PATH_TO_EXAMPLE_SRC\" does not exist"
+		usage
 		exit 1
 	fi
 
 	if [[ $RAM_TARGET != "tcm" && $RAM_TARGET != "ddr" ]]; then
 		echo "ERROR: \"$RAM_TARGET\" does not exist"
+		usage
 		exit 1
 	fi
 
 	if [[ ! -d $PATH_TO_ARM_TOOLCHAIN ]] ; then
 		echo "ERROR: \"$PATH_TO_ARM_TOOLCHAIN\" does not exist"
+		echo "Download the SDK:"
+		echo "wget https://developer.arm.com/-/media/Files/downloads/gnu-rm/9-2020q2/gcc-arm-none-eabi-9-2020-q2-update-x86_64-linux.tar.bz2"
+		echo "tar xvf gcc-arm-none-eabi-9-2020-q2-update-x86_64-linux.tar.bz2"
+		usage
 		exit 1
 	fi
 }
