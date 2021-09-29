@@ -18,7 +18,6 @@ usage()
 	echo " -b <dart_mx8mq>				board folder (DART-MX8M)."
 	echo " -d <GDBServer folder>"
 	echo " -e <freertos example folder>		example folder where add .vscode>"
-	echo " -r <executable name>			read .elf name in the CMakeLists.txt file from armgcc folder "
 	echo " -t <tcm/ddr>				ram target"
 	echo
 	echo "hello_world example: ./var_add_vscode_support.sh -b dart_mx8mq -d /opt/SEGGER/JLink_Linux_V754c_x86_64 -e boards/dart_mx8mq/multicore_examples/rpmsg_lite_pingpong_rtos/linux_remote -r hello_world.elf -t ddr"
@@ -75,7 +74,11 @@ make_vscode()
 		CORTEX_M_CPU=cortex-m4
 		;;
 	esac
-	
+
+	# Get EXECUTABLE_NAME
+	readonly EXECUTABLE_NAME_ELF="$(cat ${PATH_TO_EXAMPLE_SRC}/armgcc/CMakeLists.txt | grep -oP '(?<=MCUX_SDK_PROJECT_NAME ).+?(?=\))')"
+	readonly EXECUTABLE_NAME_BIN="$(cat ${PATH_TO_EXAMPLE_SRC}/armgcc/CMakeLists.txt | grep "{EXECUTABLE_OUTPUT_PATH}" | awk '{print $3}' | grep -oP '(?<=OUTPUT_PATH}/).+?(?=\))')"
+
 	# build target
 	if [[ $RAM_TARGET == "tcm" ]] ; then
 		BUILD_TARGET="debug"
@@ -110,7 +113,7 @@ make_vscode()
 	sed -i "s|t_path_to_arm_toolchain|$PATH_TO_ARM_TOOLCHAIN/bin|g" "$PATH_TO_EXAMPLE_SRC/.vscode/launch.json"
 	sed -i "s|t_path_to_JLinkScript|$PATH_TO_JLINKSCRIPT|g" "$PATH_TO_EXAMPLE_SRC/.vscode/launch.json"
 	sed -i "s|t_path_tosvd_file|\${workspaceRoot}/.vscode/$SVD_FILE_NAME.svd|g" "$PATH_TO_EXAMPLE_SRC/.vscode/launch.json"
-	sed -i "s|t_path_to_executable|armgcc/\${config:VARISCITE.BUILD_TARGET}/$EXECUTABLE_NAME|g" "$PATH_TO_EXAMPLE_SRC/.vscode/launch.json"
+	sed -i "s|t_path_to_executable|armgcc/\${config:VARISCITE.BUILD_TARGET}/$EXECUTABLE_NAME_ELF|g" "$PATH_TO_EXAMPLE_SRC/.vscode/launch.json"
 	sed -i "s|t_soc-cm|$CM_DEVICE_ID|g" "$PATH_TO_EXAMPLE_SRC/.vscode/launch.json"
 	sed -i "s|t_cortex-m-cpu|$CORTEX_M_CPU|g" "$PATH_TO_EXAMPLE_SRC/.vscode/launch.json"
 
@@ -134,9 +137,6 @@ do
 		;;
 	t)
 		RAM_TARGET=$OPTARG
-		;;
-	r)
-		EXECUTABLE_NAME=$OPTARG
 		;;
 	*)
 		usage
