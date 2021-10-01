@@ -15,7 +15,7 @@ usage()
 	echo " Usage: $0 OPTIONS"
 	echo
 	echo " OPTIONS:"
-	echo " -b <dart_mx8mp|som_mx8mp|dart_mx8mq>				board folder (DART-MX8M)."
+	echo " -b <dart_mx8mm|dart_mx8mp|som_mx8mp|dart_mx8mq>				board folder (DART-MX8M)."
 	echo " -d <GDBServer folder>"
 	echo " -e <options>"
 	echo "    path/to/example/folder (armgcc folder parent, where will be generated .vscode folder)"
@@ -125,6 +125,15 @@ make_vscode()
 		readonly PATH_TO_JLINKSCRIPT=iMX8ML/NXP_iMX8M_Connect_CortexM7.JLinkScript
 		readonly SVD_FILE_NAME=MIMX8ML8_cm7
 		# The correct CORTEX_M_CPU is cortex-m7 but code doesen't recognize it !
+		readonly CORTEX_M_CPU=cortex-m4
+		;;
+
+	dart_mx8mm)
+		readonly FREE_RTOS_DEVICE_DIR="MIMX8MM6"
+		readonly SOC_INCLUDE_PATH="${BSP_BASE_DIR}/devices/${FREE_RTOS_DEVICE_DIR}"
+		readonly CM_DEVICE_ID="MIMX8MM6_M4"
+		readonly PATH_TO_JLINKSCRIPT=iMX8MM/NXP_iMX8M_Connect_CortexM4.JLinkScript
+		readonly SVD_FILE_NAME=MIMX8MM6_cm4
 		readonly CORTEX_M_CPU=cortex-m4
 		;;
 	esac
