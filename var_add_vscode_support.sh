@@ -6,6 +6,8 @@ set -e
 SCRIPT_NAME=${0##*/}
 BSP_BASE_DIR=$PWD
 PATH_TO_ARM_TOOLCHAIN="${BSP_BASE_DIR}/../gcc-arm-none-eabi-9-2020-q2-update"
+CM_ID=cm_c0
+CM4_CORE_DIR=cm4_core0
 
 usage()
 {
@@ -15,7 +17,8 @@ usage()
 	echo " Usage: $0 OPTIONS"
 	echo
 	echo " OPTIONS:"
-	echo " -b <dart_mx8mm|som_mx8mn|dart_mx8mp|som_mx8mp|dart_mx8mq>				board folder (DART-MX8M)."
+	echo " -b <dart_mx8mm|som_mx8mn|dart_mx8mp|som_mx8mp|dart_mx8mq|som_mx8qm>				board folder (DART-MX8M)."
+	echo " -c <cm_c0|cm_c1>              optional cortex-m core id, if missing the default is cm_c0"
 	echo " -d <GDBServer folder>"
 	echo " -e <options>"
 	echo "    path/to/example/folder (armgcc folder parent, where will be generated .vscode folder)"
@@ -63,6 +66,12 @@ check_params()
 		usage
 		exit 1
 	fi
+
+	if [[ $CM_ID != "cm_c0" && $CM_ID != "cm_c1" ]]; then
+		echo "ERROR5: \"$CM_ID\" invalid parameter. Use cm_c0/cm_c1"
+		usage
+		exit 1
+	fi
 }
 
 make_demo_vscode()
@@ -74,7 +83,7 @@ make_demo_vscode()
 	EXECUTABLE_NAME_ELF="$(cat ${DEMO_SRC}/armgcc/CMakeLists.txt | grep -oP '(?<=MCUX_SDK_PROJECT_NAME ).+?(?=\))')"
 	EXECUTABLE_NAME_BIN="$(cat ${DEMO_SRC}/armgcc/CMakeLists.txt | grep "{EXECUTABLE_OUTPUT_PATH}" | awk '{print $3}' | grep -oP '(?<=OUTPUT_PATH}/).+?(?=\))')"
 
-	# build target
+	# set build target
 	if [[ $RAM_TARGET == "tcm" ]] ; then
 		BUILD_TARGET="debug"
 	else
@@ -147,17 +156,47 @@ make_vscode()
 		readonly CORTEX_M_CPU=cortex-m4
 		;;
 
+	som_mx8qm)
+		readonly FREE_RTOS_DEVICE_DIR="MIMX8QM6"
+		readonly SOC_INCLUDE_PATH="${BSP_BASE_DIR}/devices/${FREE_RTOS_DEVICE_DIR}"
+		readonly CORTEX_M_CPU=cortex-m4
+		if [[ $CM_ID == "cm_c1" ]]; then
+			CM4_CORE_DIR=cm4_core1
+			readonly CM_DEVICE_ID="MIMX8QM6_M4_1"
+			readonly PATH_TO_JLINKSCRIPT=iMX8QM/NXP_iMX8QM_Connect_CortexM4_1.JLinkScript
+			readonly SVD_FILE_NAME=MIMX8QM6_cm4_core1
+		else
+			CM4_CORE_DIR=cm4_core0
+			readonly CM_DEVICE_ID="MIMX8QM6_M4_0"
+			readonly PATH_TO_JLINKSCRIPT=iMX8QM/NXP_iMX8QM_Connect_CortexM4_0.JLinkScript
+			readonly SVD_FILE_NAME=MIMX8QM6_cm4_core0
+		fi
+		;;
 	esac
 
 	if [[ $PATH_TO_DEMO_SRC == "all" ]] ; then
-		for i in $(find $BSP_BASE_DIR/boards/$BOARD_DIR -name armgcc)
-		do
-			cd $i;
-			cd ..
-			path_to_demo_src=$PWD
-			cd $BSP_BASE_DIR
-			make_demo_vscode "$path_to_demo_src"
-		done
+		if [[ $BOARD_DIR != "som_mx8qm" ]] ; then
+			for i in $(find $BSP_BASE_DIR/boards/$BOARD_DIR -name armgcc)
+			do
+				cd $i;
+				cd ..
+				path_to_demo_src=$PWD
+				cd $BSP_BASE_DIR
+				make_demo_vscode "$path_to_demo_src"
+			done
+		else
+			for i in $(find $BSP_BASE_DIR/boards/$BOARD_DIR -name $CM4_CORE_DIR)
+			do
+				if echo "$i" | grep -q "low_power_tickless"; then
+					echo "$i discarded!"
+				else
+					cd $i;
+					path_to_demo_src=$PWD
+					cd $BSP_BASE_DIR
+					make_demo_vscode "$path_to_demo_src"
+				fi
+			done
+		fi
 	else
 		make_demo_vscode "$PATH_TO_DEMO_SRC"
 	fi
@@ -168,11 +207,14 @@ make_vscode()
 	fi
 }
 
-while getopts :b:d:e:t: OPTION;
+while getopts :b:c:d:e:t: OPTION;
 do
 	case $OPTION in
 	b)
 		readonly BOARD_DIR=$OPTARG
+		;;
+	c)
+		CM_ID=$OPTARG
 		;;
 	d)
 		readonly GDBSERVER_DIR=$OPTARG
