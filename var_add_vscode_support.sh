@@ -194,9 +194,7 @@ make_vscode()
 		else
 			for i in $(find $BSP_BASE_DIR/boards/$BOARD_DIR -name $CM4_CORE_DIR)
 			do
-				if echo "$i" | grep -q "low_power_tickless"; then
-					echo "$i discarded!"
-				else
+				if [[ -d "$i/armgcc" ]] ; then
 					cd $i;
 					path_to_demo_src=$PWD
 					cd $BSP_BASE_DIR
