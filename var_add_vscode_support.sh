@@ -104,6 +104,7 @@ make_demo_vscode()
 	sed -i "s|t_path_to_arm_gcc_dir|$PATH_TO_ARM_TOOLCHAIN|g" "$DEMO_SRC/.vscode/settings.json"
 	sed -i "s|t_path_to_gdb_server_dir|$GDBSERVER_DIR|g" "$DEMO_SRC/.vscode/settings.json"
 	sed -i "s|t_path_to_soc_include|$SOC_INCLUDE_PATH|g" "$DEMO_SRC/.vscode/settings.json"
+	sed -i "s|t_path_to_rtos_include|$RTOS_INCLUDE_PATH|g" "$DEMO_SRC/.vscode/settings.json"
 	sed -i "s|t_build_target|$BUILD_TARGET|g" "$DEMO_SRC/.vscode/settings.json"
 
 	# adjust launch.json
@@ -120,7 +121,6 @@ make_vscode()
 	case $BOARD_DIR in
 	dart_mx8mm)
 		readonly FREE_RTOS_DEVICE_DIR="MIMX8MM6"
-		readonly SOC_INCLUDE_PATH="${BSP_BASE_DIR}/devices/${FREE_RTOS_DEVICE_DIR}"
 		readonly CM_DEVICE_ID="MIMX8MM6_M4"
 		readonly PATH_TO_JLINKSCRIPT=iMX8MM/NXP_iMX8M_Connect_CortexM4.JLinkScript
 		readonly SVD_FILE_NAME=MIMX8MM6_cm4
@@ -129,7 +129,6 @@ make_vscode()
 
 	dart_mx8mp|som_mx8mp)
 		readonly FREE_RTOS_DEVICE_DIR="MIMX8ML8"
-		readonly SOC_INCLUDE_PATH="${BSP_BASE_DIR}/devices/${FREE_RTOS_DEVICE_DIR}"
 		readonly CM_DEVICE_ID="MIMX8ML8_M7"
 		readonly PATH_TO_JLINKSCRIPT=iMX8ML/NXP_iMX8M_Connect_CortexM7.JLinkScript
 		readonly SVD_FILE_NAME=MIMX8ML8_cm7
@@ -139,7 +138,6 @@ make_vscode()
 
 	dart_mx8mq)
 		readonly FREE_RTOS_DEVICE_DIR="MIMX8MQ6"
-		readonly SOC_INCLUDE_PATH="${BSP_BASE_DIR}/devices/${FREE_RTOS_DEVICE_DIR}"
 		readonly CM_DEVICE_ID="MIMX8MQ6_M4"
 		readonly PATH_TO_JLINKSCRIPT=iMX8M/NXP_iMX8M_Connect_CortexM4.JLinkScript
 		readonly SVD_FILE_NAME=MIMX8MQ6_cm4
@@ -148,7 +146,6 @@ make_vscode()
 
 	som_mx8mn)
 		readonly FREE_RTOS_DEVICE_DIR="MIMX8MN6"
-		readonly SOC_INCLUDE_PATH="${BSP_BASE_DIR}/devices/${FREE_RTOS_DEVICE_DIR}"
 		readonly CM_DEVICE_ID="MIMX8MN6_M7"
 		readonly PATH_TO_JLINKSCRIPT=iMX8MN/NXP_iMX8M_Connect_CortexM7.JLinkScript
 		readonly SVD_FILE_NAME=MIMX8MN6_cm7
@@ -158,7 +155,6 @@ make_vscode()
 
 	som_mx8qm)
 		readonly FREE_RTOS_DEVICE_DIR="MIMX8QM6"
-		readonly SOC_INCLUDE_PATH="${BSP_BASE_DIR}/devices/${FREE_RTOS_DEVICE_DIR}"
 		readonly CORTEX_M_CPU=cortex-m4
 		if [[ $CM_ID == "cm_c1" ]]; then
 			CM4_CORE_DIR=cm4_core1
@@ -175,13 +171,15 @@ make_vscode()
 
 	som_mx8qx)
 		readonly FREE_RTOS_DEVICE_DIR="MIMX8QX6"
-		readonly SOC_INCLUDE_PATH="${BSP_BASE_DIR}/devices/${FREE_RTOS_DEVICE_DIR}"
 		readonly CORTEX_M_CPU=cortex-m4
 		readonly CM_DEVICE_ID="MIMX8QX6_M4"
 		readonly PATH_TO_JLINKSCRIPT=iMX8QX/NXP_iMX8QX_Connect_CortexM4.JLinkScript
 		readonly SVD_FILE_NAME=MIMX8QX6_cm4
 		;;
 	esac
+
+	readonly SOC_INCLUDE_PATH="${BSP_BASE_DIR}/devices/${FREE_RTOS_DEVICE_DIR}"
+	readonly RTOS_INCLUDE_PATH="${BSP_BASE_DIR}/rtos"
 
 	if [[ $PATH_TO_DEMO_SRC == "all" ]] ; then
 		if [[ $BOARD_DIR != "som_mx8qm" ]] ; then

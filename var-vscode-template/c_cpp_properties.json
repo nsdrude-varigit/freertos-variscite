@@ -4,10 +4,10 @@
             "name": "Linux",
             "includePath": [
                 "${workspaceFolder}/**",
-                "${config:VARISCITE.SOC_INCLUDE_PATH}/**"
+                "${config:VARISCITE.SOC_INCLUDE_PATH}/**",
+                "${config:VARISCITE.RTOS_INCLUDE_PATH}/**"
             ]
         }
     ],
     "version": 4
 }
-

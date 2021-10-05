@@ -8,6 +8,7 @@
 
         /* SOC Include Path */
         "SOC_INCLUDE_PATH" : "t_path_to_soc_include",
+        "RTOS_INCLUDE_PATH" : "t_path_to_rtos_include",
 
         /* Build Target */
         "BUILD_TARGET" : "t_build_target"
