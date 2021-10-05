@@ -17,7 +17,7 @@ usage()
 	echo " Usage: $0 OPTIONS"
 	echo
 	echo " OPTIONS:"
-	echo " -b <dart_mx8mm|som_mx8mn|dart_mx8mp|som_mx8mp|dart_mx8mq|som_mx8qm>				board folder (DART-MX8M)."
+	echo " -b <dart_mx8mm|som_mx8mn|dart_mx8mp|som_mx8mp|dart_mx8mq|som_mx8qm|som_mx8qx>				board folder (DART-MX8M)."
 	echo " -c <cm_c0|cm_c1>              optional cortex-m core id, if missing the default is cm_c0"
 	echo " -d <GDBServer folder>"
 	echo " -e <options>"
@@ -172,6 +172,15 @@ make_vscode()
 			readonly SVD_FILE_NAME=MIMX8QM6_cm4_core0
 		fi
 		;;
+
+	som_mx8qx)
+		readonly FREE_RTOS_DEVICE_DIR="MIMX8QX6"
+		readonly SOC_INCLUDE_PATH="${BSP_BASE_DIR}/devices/${FREE_RTOS_DEVICE_DIR}"
+		readonly CORTEX_M_CPU=cortex-m4
+		readonly CM_DEVICE_ID="MIMX8QX6_M4"
+		readonly PATH_TO_JLINKSCRIPT=iMX8QX/NXP_iMX8QX_Connect_CortexM4.JLinkScript
+		readonly SVD_FILE_NAME=MIMX8QX6_cm4
+		;;
 	esac
 
 	if [[ $PATH_TO_DEMO_SRC == "all" ]] ; then
@@ -202,7 +211,7 @@ make_vscode()
 	fi
 
 	#raccomandations
-	if [ $CORTEX_M_CPU == "cortex-m4" ] && [ $RAM_TARGET == "ddr" ] && [ $CM_DEVICE_ID != "MIMX8ML8_M7" ]; then
+	if [ $CORTEX_M_CPU == "cortex-m4" ] && [ $RAM_TARGET == "ddr" ] && [ $CM_DEVICE_ID != "MIMX8MN6_M7" ] && [ $CM_DEVICE_ID != "MIMX8ML8_M7" ]; then
 		echo "NOTE! to debug applications mapped in DDR, is mandatory to disable cache (see SystemInit(void) function in....)"
 	fi
 }
