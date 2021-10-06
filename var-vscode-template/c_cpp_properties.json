@@ -5,7 +5,8 @@
             "includePath": [
                 "${workspaceFolder}/**",
                 "${config:VARISCITE.SOC_INCLUDE_PATH}/**",
-                "${config:VARISCITE.RTOS_INCLUDE_PATH}/**"
+                "${config:VARISCITE.RTOS_INCLUDE_PATH}/**",
+                "${config:VARISCITE.MIDDLEWARE_INCLUDE_PATH}/**"
             ]
         }
     ],

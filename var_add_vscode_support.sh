@@ -105,6 +105,7 @@ make_demo_vscode()
 	sed -i "s|t_path_to_gdb_server_dir|$GDBSERVER_DIR|g" "$DEMO_SRC/.vscode/settings.json"
 	sed -i "s|t_path_to_soc_include|$SOC_INCLUDE_PATH|g" "$DEMO_SRC/.vscode/settings.json"
 	sed -i "s|t_path_to_rtos_include|$RTOS_INCLUDE_PATH|g" "$DEMO_SRC/.vscode/settings.json"
+	sed -i "s|t_path_to_middleware_include|$MIDDLEWARE_INCLUDE_PATH|g" "$DEMO_SRC/.vscode/settings.json"
 	sed -i "s|t_build_target|$BUILD_TARGET|g" "$DEMO_SRC/.vscode/settings.json"
 
 	# adjust launch.json
@@ -180,6 +181,7 @@ make_vscode()
 
 	readonly SOC_INCLUDE_PATH="${BSP_BASE_DIR}/devices/${FREE_RTOS_DEVICE_DIR}"
 	readonly RTOS_INCLUDE_PATH="${BSP_BASE_DIR}/rtos"
+	readonly MIDDLEWARE_INCLUDE_PATH="${BSP_BASE_DIR}/middleware"
 
 	if [[ $PATH_TO_DEMO_SRC == "all" ]] ; then
 		if [[ $BOARD_DIR != "som_mx8qm" ]] ; then
