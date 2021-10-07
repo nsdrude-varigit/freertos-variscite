@@ -17,16 +17,17 @@ usage()
 	echo " Usage: $0 OPTIONS"
 	echo
 	echo " OPTIONS:"
-	echo " -b <dart_mx8mm|som_mx8mn|dart_mx8mp|som_mx8mp|dart_mx8mq|som_mx8qm|som_mx8qx>				board folder (DART-MX8M)."
-	echo " -c <cm_c0|cm_c1>              optional cortex-m core id, if missing the default is cm_c0"
+	echo " -b <dart_mx8mm|som_mx8mn|dart_mx8mp|som_mx8mp|dart_mx8mq|som_mx8qm|som_mx8qx>             board folder (DART-MX8M)."
+	echo " -c <cm_c0|cm_c1>                                                                          optional cortex-m core id, if missing the default is cm_c0"
 	echo " -d <GDBServer folder>"
 	echo " -e <options>"
-	echo "    path/to/example/folder (armgcc folder parent, where will be generated .vscode folder)"
-	echo "    all                    (to generate .vscode folder for all demos)"
-	echo " -t <tcm/ddr>				ram target"
+	echo "    path/to/example/folder                                                                 (armgcc folder parent, where will be generated .vscode folder)"
+	echo "    all                                                                                    (to generate .vscode folder for all demos)"
+	echo " -t <tcm/ddr>				                                                   ram target"
 	echo
-	echo "Examples of use:"
-	echo "  generate vscode support to hello_world for DART-MX8M: ./${SCRIPT_NAME} -b dart_mx8mq -d /opt/SEGGER/JLink_Linux_V754c_x86_64 -e boards/dart_mx8mq/demo_apps/hello_world -t ddr"
+	echo "Examples of use for DART-MX8M:"
+	echo "  generate .vscode folder for hello_world demo: ./${SCRIPT_NAME} -b dart_mx8mq -e boards/dart_mx8mq/demo_apps/hello_world -t ddr -d /opt/SEGGER/JLink_Linux_V754c_x86_64"
+	echo "  generate .vscode folder for all demos:        ./${SCRIPT_NAME} -b dart_mx8mq -e all -t ddr -d /opt/SEGGER/JLink_Linux_V754c_x86_64"
 	echo
 }
 
@@ -122,6 +123,7 @@ make_vscode()
 	case $BOARD_DIR in
 	dart_mx8mm)
 		readonly FREE_RTOS_DEVICE_DIR="MIMX8MM6"
+		readonly DEVICE_SPECIFIC_CFG_FILE="${BSP_BASE_DIR}/devices/$FREE_RTOS_DEVICE_DIR/system_MIMX8MM6_cm4.c"
 		readonly CM_DEVICE_ID="MIMX8MM6_M4"
 		readonly PATH_TO_JLINKSCRIPT=iMX8MM/NXP_iMX8M_Connect_CortexM4.JLinkScript
 		readonly SVD_FILE_NAME=MIMX8MM6_cm4
@@ -139,6 +141,7 @@ make_vscode()
 
 	dart_mx8mq)
 		readonly FREE_RTOS_DEVICE_DIR="MIMX8MQ6"
+		readonly DEVICE_SPECIFIC_CFG_FILE="${BSP_BASE_DIR}/devices/$FREE_RTOS_DEVICE_DIR/system_MIMX8MQ6_cm4.c"
 		readonly CM_DEVICE_ID="MIMX8MQ6_M4"
 		readonly PATH_TO_JLINKSCRIPT=iMX8M/NXP_iMX8M_Connect_CortexM4.JLinkScript
 		readonly SVD_FILE_NAME=MIMX8MQ6_cm4
@@ -158,11 +161,13 @@ make_vscode()
 		readonly FREE_RTOS_DEVICE_DIR="MIMX8QM6"
 		readonly CORTEX_M_CPU=cortex-m4
 		if [[ $CM_ID == "cm_c1" ]]; then
+			readonly DEVICE_SPECIFIC_CFG_FILE="${BSP_BASE_DIR}/devices/$FREE_RTOS_DEVICE_DIR/system_MIMX8QM6_cm4_core1.c"
 			CM4_CORE_DIR=cm4_core1
 			readonly CM_DEVICE_ID="MIMX8QM6_M4_1"
 			readonly PATH_TO_JLINKSCRIPT=iMX8QM/NXP_iMX8QM_Connect_CortexM4_1.JLinkScript
 			readonly SVD_FILE_NAME=MIMX8QM6_cm4_core1
 		else
+			readonly DEVICE_SPECIFIC_CFG_FILE="${BSP_BASE_DIR}/devices/$FREE_RTOS_DEVICE_DIR/system_MIMX8QM6_cm4_core0.c"
 			CM4_CORE_DIR=cm4_core0
 			readonly CM_DEVICE_ID="MIMX8QM6_M4_0"
 			readonly PATH_TO_JLINKSCRIPT=iMX8QM/NXP_iMX8QM_Connect_CortexM4_0.JLinkScript
@@ -172,6 +177,7 @@ make_vscode()
 
 	som_mx8qx)
 		readonly FREE_RTOS_DEVICE_DIR="MIMX8QX6"
+		readonly DEVICE_SPECIFIC_CFG_FILE="${BSP_BASE_DIR}/devices/$FREE_RTOS_DEVICE_DIR/system_MIMX8QX6_cm4.c"
 		readonly CORTEX_M_CPU=cortex-m4
 		readonly CM_DEVICE_ID="MIMX8QX6_M4"
 		readonly PATH_TO_JLINKSCRIPT=iMX8QX/NXP_iMX8QX_Connect_CortexM4.JLinkScript
@@ -210,7 +216,10 @@ make_vscode()
 
 	#raccomandations
 	if [ $CORTEX_M_CPU == "cortex-m4" ] && [ $RAM_TARGET == "ddr" ] && [ $CM_DEVICE_ID != "MIMX8MN6_M7" ] && [ $CM_DEVICE_ID != "MIMX8ML8_M7" ]; then
-		echo "NOTE! to debug applications mapped in DDR, is mandatory to disable cache (see SystemInit(void) function in....)"
+		echo
+		echo "NOTE: to debug applications mapped in DDR, is mandatory to not enable cache"
+		echo "      the function to be changed is SystemInit() in the $DEVICE_SPECIFIC_CFG_FILE file"
+		echo
 	fi
 }
 
