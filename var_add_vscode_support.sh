@@ -75,7 +75,7 @@ check_params()
 	fi
 
 	if [[ $CM_ID != "cm_c0" && $CM_ID != "cm_c1" ]]; then
-		echo "ERROR5: \"$CM_ID\" invalid parameter. Use cm_c0/cm_c1"
+		echo "ERROR6: \"$CM_ID\" invalid parameter. Use cm_c0/cm_c1"
 		usage
 		exit 1
 	fi
@@ -218,9 +218,13 @@ make_vscode()
 		fi
 	else
 		make_demo_vscode "$PATH_TO_DEMO_SRC"
+		echo
+		echo "Open new VS Code project directory:"
+		echo "$ code $BSP_BASE_DIR/$PATH_TO_DEMO_SRC"
+		echo
 	fi
 
-	#raccomandations
+	#recommondations
 	if [ $CORTEX_M_CPU == "cortex-m4" ] && [ $RAM_TARGET == "ddr" ] && [ $CM_DEVICE_ID != "MIMX8MN6_M7" ] && [ $CM_DEVICE_ID != "MIMX8ML8_M7" ]; then
 		echo
 		echo "NOTE: to debug applications mapped in DDR, is mandatory to not enable cache"
