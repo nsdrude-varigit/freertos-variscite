@@ -3,9 +3,9 @@
 # -e  Exit immediately if a command exits with a non-zero status.
 set -e
 
-SCRIPT_NAME=${0##*/}
-BSP_BASE_DIR=$PWD
-PATH_TO_ARM_TOOLCHAIN="${BSP_BASE_DIR}/../gcc-arm-none-eabi-9-2020-q2-update"
+readonly SCRIPT_NAME=${0##*/}
+readonly BSP_BASE_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+readonly PATH_TO_ARM_TOOLCHAIN="${BSP_BASE_DIR}/../gcc-arm-none-eabi-9-2020-q2-update"
 CM_ID=cm_c0
 CM4_CORE_DIR=cm4_core0
 
@@ -33,6 +33,12 @@ usage()
 
 check_params()
 {
+	if [ "$BSP_BASE_DIR" != "$PWD" ]; then
+		echo "ERROR0: Script must be run from $BSP_BASE_DIR"
+		usage
+		exit 1
+	fi
+
 	if [[ ! -d boards/$BOARD_DIR ]] ; then
 		echo "ERROR1: \"boards/$BOARD_DIR\" does not exist"
 		usage
